@@ -723,4 +723,4 @@ function Aurora:CreateNotification(config)
     slideOut.Completed:Connect(function()
         NotificationGui:Destroy()
     end)
-end`;
+end
