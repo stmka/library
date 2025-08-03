@@ -1,7 +1,20 @@
+-- Aurora GUI Library - Complete Version
+-- Beautiful, modern GUI library for Lua
+-- Contains: Main Library + Tab System + Elements + Notifications
+-- Created with glass morphism effects and smooth animations
+
+-- ========================================
+-- MAIN AURORA LIBRARY
+-- ========================================
+
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+
 local Aurora = {}
 Aurora.__index = Aurora
 
--- 🎨 Theme Configuration
+-- Theme Configuration
 local Themes = {
     Dark = {
         Background = Color3.fromRGB(15, 15, 23),
@@ -17,263 +30,172 @@ local Themes = {
     }
 }
 
--- 🚀 Create New Window
+-- Create Window
 function Aurora:CreateWindow(config)
-    local Window = {
-        Title = config.Title or "Aurora Hub",
+    local window = {
+        Title = config.Title or "Aurora GUI",
         Theme = config.Theme or "Dark",
         Size = config.Size or UDim2.new(0, 580, 0, 460),
         Position = config.Position or UDim2.new(0.5, -290, 0.5, -230),
         Draggable = config.Draggable ~= false,
         MinimizeButton = config.MinimizeButton ~= false,
-        CloseButton = config.CloseButton ~= false,
-        IsVisible = true
+        CloseButton = config.CloseButton ~= false
     }
     
     -- Create ScreenGui
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "AuroraHub"
-    ScreenGui.Parent = game.CoreGui
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "AuroraGUI"
+    screenGui.Parent = game.CoreGui
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    -- Main Frame with Glass Effect
-    local MainFrame = Instance.new("Frame")
-    MainFrame.Name = "MainFrame"
-    MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Themes[Window.Theme].Surface
-    MainFrame.BackgroundTransparency = 0.1
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Position = Window.Position
-    MainFrame.Size = Window.Size
-    MainFrame.ClipsDescendants = true
+    -- Main Frame
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Parent = screenGui
+    mainFrame.BackgroundColor3 = Themes[window.Theme].Surface
+    mainFrame.BackgroundTransparency = 0.1
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Position = window.Position
+    mainFrame.Size = window.Size
+    mainFrame.ClipsDescendants = true
     
-    -- Rounded Corners
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 16)
-    Corner.Parent = MainFrame
+    -- Rounded corners
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 16)
+    corner.Parent = mainFrame
     
-    -- Glass Effect
-    local Blur = Instance.new("Frame")
-    Blur.Name = "BlurEffect"
-    Blur.Parent = MainFrame
-    Blur.BackgroundColor3 = Themes[Window.Theme].Background
-    Blur.BackgroundTransparency = 0.3
-    Blur.BorderSizePixel = 0
-    Blur.Size = UDim2.new(1, 0, 1, 0)
+    -- Glass effect
+    local blur = Instance.new("Frame")
+    blur.Name = "BlurEffect"
+    blur.Parent = mainFrame
+    blur.BackgroundColor3 = Themes[window.Theme].Background
+    blur.BackgroundTransparency = 0.3
+    blur.BorderSizePixel = 0
+    blur.Size = UDim2.new(1, 0, 1, 0)
     
-    local BlurCorner = Instance.new("UICorner")
-    BlurCorner.CornerRadius = UDim.new(0, 16)
-    BlurCorner.Parent = Blur
+    local blurCorner = Instance.new("UICorner")
+    blurCorner.CornerRadius = UDim.new(0, 16)
+    blurCorner.Parent = blur
     
-    -- Gradient Border
-    local BorderStroke = Instance.new("UIStroke")
-    BorderStroke.Color = Themes[Window.Theme].Primary
-    BorderStroke.Thickness = 1
-    BorderStroke.Transparency = 0.5
-    BorderStroke.Parent = MainFrame
+    -- Border stroke
+    local borderStroke = Instance.new("UIStroke")
+    borderStroke.Color = Themes[window.Theme].Primary
+    borderStroke.Thickness = 1
+    borderStroke.Transparency = 0.5
+    borderStroke.Parent = mainFrame
     
-    -- Title Bar
-    local TitleBar = Instance.new("Frame")
-    TitleBar.Name = "TitleBar"
-    TitleBar.Parent = MainFrame
-    TitleBar.BackgroundColor3 = Themes[Window.Theme].Surface
-    TitleBar.BackgroundTransparency = 0.2
-    TitleBar.BorderSizePixel = 0
-    TitleBar.Size = UDim2.new(1, 0, 0, 50)
+    -- Title bar
+    local titleBar = Instance.new("Frame")
+    titleBar.Name = "TitleBar"
+    titleBar.Parent = mainFrame
+    titleBar.BackgroundColor3 = Themes[window.Theme].Surface
+    titleBar.BackgroundTransparency = 0.2
+    titleBar.BorderSizePixel = 0
+    titleBar.Size = UDim2.new(1, 0, 0, 50)
     
-    local TitleCorner = Instance.new("UICorner")
-    TitleCorner.CornerRadius = UDim.new(0, 16)
-    TitleCorner.Parent = TitleBar
+    local titleCorner = Instance.new("UICorner")
+    titleCorner.CornerRadius = UDim.new(0, 16)
+    titleCorner.Parent = titleBar
     
-    -- Title Text with Gradient
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Name = "TitleLabel"
-    TitleLabel.Parent = TitleBar
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Position = UDim2.new(0, 20, 0, 0)
-    TitleLabel.Size = UDim2.new(1, -100, 1, 0)
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.Text = Window.Title
-    TitleLabel.TextColor3 = Themes[Window.Theme].Text
-    TitleLabel.TextSize = 16
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    -- Title text
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Name = "TitleLabel"
+    titleLabel.Parent = titleBar
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Position = UDim2.new(0, 20, 0, 0)
+    titleLabel.Size = UDim2.new(1, -100, 1, 0)
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.Text = window.Title
+    titleLabel.TextColor3 = Themes[window.Theme].Text
+    titleLabel.TextSize = 16
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     
-    -- Control Buttons
-    local ControlsFrame = Instance.new("Frame")
-    ControlsFrame.Name = "ControlsFrame"
-    ControlsFrame.Parent = TitleBar
-    ControlsFrame.BackgroundTransparency = 1
-    ControlsFrame.Position = UDim2.new(1, -80, 0, 10)
-    ControlsFrame.Size = UDim2.new(0, 70, 0, 30)
+    -- Control buttons frame
+    local controlsFrame = Instance.new("Frame")
+    controlsFrame.Name = "ControlsFrame"
+    controlsFrame.Parent = titleBar
+    controlsFrame.BackgroundTransparency = 1
+    controlsFrame.Position = UDim2.new(1, -80, 0, 10)
+    controlsFrame.Size = UDim2.new(0, 70, 0, 30)
     
-    local ControlsLayout = Instance.new("UIListLayout")
-    ControlsLayout.Parent = ControlsFrame
-    ControlsLayout.FillDirection = Enum.FillDirection.Horizontal
-    ControlsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-    ControlsLayout.Padding = UDim.new(0, 5)
+    local controlsLayout = Instance.new("UIListLayout")
+    controlsLayout.Parent = controlsFrame
+    controlsLayout.FillDirection = Enum.FillDirection.Horizontal
+    controlsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    controlsLayout.Padding = UDim.new(0, 5)
     
-    -- Hide Message Frame
-    local HideMessage = Instance.new("Frame")
-    HideMessage.Name = "HideMessage"
-    HideMessage.Parent = ScreenGui
-    HideMessage.BackgroundColor3 = Themes[Window.Theme].Surface
-    HideMessage.BackgroundTransparency = 0.1
-    HideMessage.BorderSizePixel = 0
-    HideMessage.Position = UDim2.new(0.5, -150, 0, 20)
-    HideMessage.Size = UDim2.new(0, 300, 0, 60)
-    HideMessage.Visible = false
-    
-    local HideCorner = Instance.new("UICorner")
-    HideCorner.CornerRadius = UDim.new(0, 12)
-    HideCorner.Parent = HideMessage
-    
-    local HideStroke = Instance.new("UIStroke")
-    HideStroke.Color = Themes[Window.Theme].Primary
-    HideStroke.Thickness = 1
-    HideStroke.Transparency = 0.5
-    HideStroke.Parent = HideMessage
-    
-    local HideText = Instance.new("TextLabel")
-    HideText.Parent = HideMessage
-    HideText.BackgroundTransparency = 1
-    HideText.Size = UDim2.new(1, 0, 1, 0)
-    HideText.Font = Enum.Font.GothamMedium
-    HideText.Text = "Aurora Hub is hidden. Press 'K' to show."
-    HideText.TextColor3 = Themes[Window.Theme].Text
-    HideText.TextSize = 14
-    
-    -- Minimize Button (Hide functionality)
-    if Window.MinimizeButton then
-        local MinimizeBtn = Instance.new("TextButton")
-        MinimizeBtn.Name = "MinimizeButton"
-        MinimizeBtn.Parent = ControlsFrame
-        MinimizeBtn.BackgroundColor3 = Themes[Window.Theme].Warning
-        MinimizeBtn.BorderSizePixel = 0
-        MinimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-        MinimizeBtn.Text = "−"
-        MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        MinimizeBtn.TextSize = 18
-        MinimizeBtn.Font = Enum.Font.GothamBold
+    -- Minimize button
+    if window.MinimizeButton then
+        local minimizeBtn = Instance.new("TextButton")
+        minimizeBtn.Name = "MinimizeButton"
+        minimizeBtn.Parent = controlsFrame
+        minimizeBtn.BackgroundColor3 = Themes[window.Theme].Warning
+        minimizeBtn.BorderSizePixel = 0
+        minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+        minimizeBtn.Text = "−"
+        minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        minimizeBtn.TextSize = 18
+        minimizeBtn.Font = Enum.Font.GothamBold
         
-        local MinCorner = Instance.new("UICorner")
-        MinCorner.CornerRadius = UDim.new(0, 8)
-        MinCorner.Parent = MinimizeBtn
+        local minCorner = Instance.new("UICorner")
+        minCorner.CornerRadius = UDim.new(0, 8)
+        minCorner.Parent = minimizeBtn
+    end
+    
+    -- Close button
+    if window.CloseButton then
+        local closeBtn = Instance.new("TextButton")
+        closeBtn.Name = "CloseButton"
+        closeBtn.Parent = controlsFrame
+        closeBtn.BackgroundColor3 = Themes[window.Theme].Error
+        closeBtn.BorderSizePixel = 0
+        closeBtn.Size = UDim2.new(0, 30, 0, 30)
+        closeBtn.Text = "×"
+        closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtn.TextSize = 18
+        closeBtn.Font = Enum.Font.GothamBold
         
-        MinimizeBtn.MouseButton1Click:Connect(function()
-            Window.IsVisible = false
-            MainFrame.Visible = false
-            HideMessage.Visible = true
-            
-            -- Slide in animation for hide message
-            local TweenService = game:GetService("TweenService")
-            HideMessage.Position = UDim2.new(0.5, -150, 0, -60)
-            local slideIn = TweenService:Create(
-                HideMessage,
-                TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-                {Position = UDim2.new(0.5, -150, 0, 20)}
-            )
-            slideIn:Play()
+        local closeCorner = Instance.new("UICorner")
+        closeCorner.CornerRadius = UDim.new(0, 8)
+        closeCorner.Parent = closeBtn
+        
+        closeBtn.MouseButton1Click:Connect(function()
+            screenGui:Destroy()
         end)
     end
     
-    -- Close Button (Destroy GUI)
-    if Window.CloseButton then
-        local CloseBtn = Instance.new("TextButton")
-        CloseBtn.Name = "CloseButton"
-        CloseBtn.Parent = ControlsFrame
-        CloseBtn.BackgroundColor3 = Themes[Window.Theme].Error
-        CloseBtn.BorderSizePixel = 0
-        CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-        CloseBtn.Text = "×"
-        CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        CloseBtn.TextSize = 18
-        CloseBtn.Font = Enum.Font.GothamBold
-        
-        local CloseCorner = Instance.new("UICorner")
-        CloseCorner.CornerRadius = UDim.new(0, 8)
-        CloseCorner.Parent = CloseBtn
-        
-        CloseBtn.MouseButton1Click:Connect(function()
-            ScreenGui:Destroy()
-        end)
-    end
-    
-    -- Tabs Container
-    local TabsContainer = Instance.new("Frame")
-    TabsContainer.Name = "TabsContainer"
-    TabsContainer.Parent = MainFrame
-    TabsContainer.BackgroundTransparency = 1
-    TabsContainer.Position = UDim2.new(0, 10, 0, 50)
-    TabsContainer.Size = UDim2.new(1, -20, 0, 40)
-    
-    local TabsLayout = Instance.new("UIListLayout")
-    TabsLayout.Parent = TabsContainer
-    TabsLayout.FillDirection = Enum.FillDirection.Horizontal
-    TabsLayout.Padding = UDim.new(0, 5)
-    TabsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-    
-    -- Content Frame
-    local ContentFrame = Instance.new("ScrollingFrame")
-    ContentFrame.Name = "ContentFrame"
-    ContentFrame.Parent = MainFrame
-    ContentFrame.BackgroundTransparency = 1
-    ContentFrame.BorderSizePixel = 0
-    ContentFrame.Position = UDim2.new(0, 0, 0, 90) -- Adjusted for tabs
-    ContentFrame.Size = UDim2.new(1, 0, 1, -90)
-    ContentFrame.ScrollBarThickness = 6
-    ContentFrame.ScrollBarImageColor3 = Themes[Window.Theme].Primary
-    ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    -- Content frame
+    local contentFrame = Instance.new("ScrollingFrame")
+    contentFrame.Name = "ContentFrame"
+    contentFrame.Parent = mainFrame
+    contentFrame.BackgroundTransparency = 1
+    contentFrame.BorderSizePixel = 0
+    contentFrame.Position = UDim2.new(0, 0, 0, 50)
+    contentFrame.Size = UDim2.new(1, 0, 1, -50)
+    contentFrame.ScrollBarThickness = 6
+    contentFrame.ScrollBarImageColor3 = Themes[window.Theme].Primary
+    contentFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
     
     -- Auto-resize canvas
-    local ContentLayout = Instance.new("UIListLayout")
-    ContentLayout.Parent = ContentFrame
-    ContentLayout.Padding = UDim.new(0, 10)
-    ContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    local contentLayout = Instance.new("UIListLayout")
+    contentLayout.Parent = contentFrame
+    contentLayout.Padding = UDim.new(0, 10)
+    contentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     
-    ContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        ContentFrame.CanvasSize = UDim2.new(0, 0, 0, ContentLayout.AbsoluteContentSize.Y + 20)
-    end)
-    
-    -- Store tabs
-    Window.Tabs = {}
-    
-    -- Toggle Visibility with K key
-    local UserInputService = game:GetService("UserInputService")
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.KeyCode == Enum.KeyCode.K then
-            if Window.IsVisible then
-                Window.IsVisible = false
-                MainFrame.Visible = false
-                HideMessage.Visible = true
-                
-                -- Slide in animation for hide message
-                local TweenService = game:GetService("TweenService")
-                HideMessage.Position = UDim2.new(0.5, -150, 0, -60)
-                local slideIn = TweenService:Create(
-                    HideMessage,
-                    TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-                    {Position = UDim2.new(0.5, -150, 0, 20)}
-                )
-                slideIn:Play()
-            else
-                Window.IsVisible = true
-                MainFrame.Visible = true
-                HideMessage.Visible = false
-            end
-        end
+    contentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        contentFrame.CanvasSize = UDim2.new(0, 0, 0, contentLayout.AbsoluteContentSize.Y + 20)
     end)
     
     -- Dragging functionality
-    if Window.Draggable then
+    if window.Draggable then
         local dragging = false
         local dragInput, mousePos, framePos
         
-        TitleBar.InputBegan:Connect(function(input)
+        titleBar.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = true
                 mousePos = input.Position
-                framePos = MainFrame.Position
+                framePos = mainFrame.Position
                 
                 input.Changed:Connect(function()
                     if input.UserInputState == Enum.UserInputState.End then
@@ -283,7 +205,7 @@ function Aurora:CreateWindow(config)
             end
         end)
         
-        TitleBar.InputChanged:Connect(function(input)
+        titleBar.InputChanged:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseMovement then
                 dragInput = input
             end
@@ -292,248 +214,177 @@ function Aurora:CreateWindow(config)
         UserInputService.InputChanged:Connect(function(input)
             if input == dragInput and dragging then
                 local delta = input.Position - mousePos
-                MainFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+                mainFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
             end
         end)
     end
     
-    Window.ScreenGui = ScreenGui
-    Window.MainFrame = MainFrame
-    Window.ContentFrame = ContentFrame
-    Window.TabsContainer = TabsContainer
-    Window.Theme = Themes[Window.Theme]
+    window.ScreenGui = screenGui
+    window.MainFrame = mainFrame
+    window.ContentFrame = contentFrame
+    window.Theme = Themes[window.Theme]
     
-    return Window
+    return window
 end
 
--- 📑 Tab System
+-- ========================================
+-- TAB SYSTEM
+-- ========================================
+
 function Window:CreateTab(config)
-    local Tab = {
+    local tab = {
         Name = config.Name or "Tab",
         Icon = config.Icon or "rbxasset://textures/ui/GuiImagePlaceholder.png"
     }
     
-    -- Tab Button
-    local TabButton = Instance.new("TextButton")
-    TabButton.Name = Tab.Name .. "Tab"
-    TabButton.Parent = self.TabsContainer
-    TabButton.BackgroundColor3 = self.Theme.Surface
-    TabButton.BackgroundTransparency = 0.3
-    TabButton.BorderSizePixel = 0
-    TabButton.Size = UDim2.new(0, 150, 1, 0)
-    TabButton.Font = Enum.Font.Gotham
-    TabButton.Text = "  " .. Tab.Name
-    TabButton.TextColor3 = self.Theme.TextSecondary
-    TabButton.TextSize = 14
-    TabButton.TextXAlignment = Enum.TextXAlignment.Left
+    -- Tab content frame
+    local tabContent = Instance.new("ScrollingFrame")
+    tabContent.Name = tab.Name .. "Content"
+    tabContent.Parent = self.ContentFrame
+    tabContent.BackgroundTransparency = 1
+    tabContent.BorderSizePixel = 0
+    tabContent.Size = UDim2.new(1, 0, 1, 0)
+    tabContent.ScrollBarThickness = 6
+    tabContent.ScrollBarImageColor3 = self.Theme.Primary
+    tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
     
-    local TabCorner = Instance.new("UICorner")
-    TabCorner.CornerRadius = UDim.new(0, 12)
-    TabCorner.Parent = TabButton
-    
-    -- Tab Icon
-    local TabIcon = Instance.new("ImageLabel")
-    TabIcon.Name = "TabIcon"
-    TabIcon.Parent = TabButton
-    TabIcon.BackgroundTransparency = 1
-    TabIcon.Position = UDim2.new(0, 10, 0.5, -10)
-    TabIcon.Size = UDim2.new(0, 20, 0, 20)
-    TabIcon.Image = Tab.Icon
-    TabIcon.ImageColor3 = self.Theme.TextSecondary
-    
-    -- Tab Content Frame
-    local TabContent = Instance.new("ScrollingFrame")
-    TabContent.Name = Tab.Name .. "Content"
-    TabContent.Parent = self.ContentFrame
-    TabContent.BackgroundTransparency = 1
-    TabContent.BorderSizePixel = 0
-    TabContent.Size = UDim2.new(1, 0, 1, 0)
-    TabContent.ScrollBarThickness = 6
-    TabContent.ScrollBarImageColor3 = self.Theme.Primary
-    TabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-    TabContent.Visible = false
-    
-    local TabLayout = Instance.new("UIListLayout")
-    TabLayout.Parent = TabContent
-    TabLayout.Padding = UDim.new(0, 8)
-    TabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    local tabLayout = Instance.new("UIListLayout")
+    tabLayout.Parent = tabContent
+    tabLayout.Padding = UDim.new(0, 8)
+    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     
     -- Auto-resize canvas
-    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabContent.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 20)
+    tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        tabContent.CanvasSize = UDim2.new(0, 0, 0, tabLayout.AbsoluteContentSize.Y + 20)
     end)
     
-    -- Tab Selection Logic
-    TabButton.MouseButton1Click:Connect(function()
-        -- Hide all tabs
-        for _, child in pairs(self.ContentFrame:GetChildren()) do
-            if child:IsA("ScrollingFrame") then
-                child.Visible = false
-            end
-        end
-        
-        -- Reset all tab buttons
-        for _, button in pairs(self.TabsContainer:GetChildren()) do
-            if button:IsA("TextButton") then
-                button.BackgroundTransparency = 0.3
-                button.TextColor3 = self.Theme.TextSecondary
-                if button:FindFirstChild("TabIcon") then
-                    button.TabIcon.ImageColor3 = self.Theme.TextSecondary
-                end
-            end
-        end
-        
-        -- Activate selected tab
-        TabContent.Visible = true
-        TabButton.BackgroundTransparency = 0
-        TabButton.TextColor3 = self.Theme.Text
-        TabIcon.ImageColor3 = self.Theme.Primary
-        
-        -- Smooth animation
-        local TweenService = game:GetService("TweenService")
-        local tween = TweenService:Create(
-            TabButton,
-            TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-            {BackgroundColor3 = self.Theme.Primary}
-        )
-        tween:Play()
-    end)
+    tab.Content = tabContent
+    tab.Layout = tabLayout
     
-    -- Activate first tab
-    if #self.Tabs == 0 then
-        TabContent.Visible = true
-        TabButton.BackgroundTransparency = 0
-        TabButton.TextColor3 = self.Theme.Text
-        TabIcon.ImageColor3 = self.Theme.Primary
-    end
-    
-    table.insert(self.Tabs, Tab)
-    
-    return Tab
+    return tab
 end
 
--- 🎛️ Create Button
+-- ========================================
+-- GUI ELEMENTS
+-- ========================================
+
 function Tab:CreateButton(config)
-    local Button = Instance.new("TextButton")
-    Button.Name = config.Name or "Button"
-    Button.Parent = self.Content
-    Button.BackgroundColor3 = self.Theme.Primary
-    Button.BorderSizePixel = 0
-    Button.Size = UDim2.new(1, -40, 0, 45)
-    Button.Font = Enum.Font.GothamMedium
-    Button.Text = config.Text or "Button"
-    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Button.TextSize = 14
+    local button = Instance.new("TextButton")
+    button.Name = config.Name or "Button"
+    button.Parent = self.Content
+    button.BackgroundColor3 = Color3.fromRGB(99, 102, 241)
+    button.BorderSizePixel = 0
+    button.Size = UDim2.new(1, -40, 0, 45)
+    button.Font = Enum.Font.GothamMedium
+    button.Text = config.Text or "Button"
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 14
     
-    local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 12)
-    ButtonCorner.Parent = Button
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 12)
+    buttonCorner.Parent = button
     
-    -- Gradient Effect
-    local ButtonGradient = Instance.new("UIGradient")
-    ButtonGradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, self.Theme.Primary),
-        ColorSequenceKeypoint.new(1, self.Theme.Secondary)
+    -- Gradient effect
+    local buttonGradient = Instance.new("UIGradient")
+    buttonGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(99, 102, 241)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(139, 92, 246))
     }
-    ButtonGradient.Rotation = 45
-    ButtonGradient.Parent = Button
+    buttonGradient.Rotation = 45
+    buttonGradient.Parent = button
     
-    -- Hover Effect
-    Button.MouseEnter:Connect(function()
-        local TweenService = game:GetService("TweenService")
-        TweenService:Create(Button, TweenInfo.new(0.2), {
+    -- Hover effect
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {
             Size = UDim2.new(1, -35, 0, 45)
         }):Play()
     end)
     
-    Button.MouseLeave:Connect(function()
-        local TweenService = game:GetService("TweenService")
-        TweenService:Create(Button, TweenInfo.new(0.2), {
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {
             Size = UDim2.new(1, -40, 0, 45)
         }):Play()
     end)
     
-    Button.MouseButton1Click:Connect(function()
+    button.MouseButton1Click:Connect(function()
         if config.Callback then
             config.Callback()
         end
     end)
     
-    return Button
+    return button
 end
 
--- 🔄 Create Toggle
 function Tab:CreateToggle(config)
-    local ToggleFrame = Instance.new("Frame")
-    ToggleFrame.Name = config.Name or "Toggle"
-    ToggleFrame.Parent = self.Content
-    ToggleFrame.BackgroundColor3 = self.Theme.Surface
-    ToggleFrame.BorderSizePixel = 0
-    ToggleFrame.Size = UDim2.new(1, -40, 0, 50)
+    local toggleFrame = Instance.new("Frame")
+    toggleFrame.Name = config.Name or "Toggle"
+    toggleFrame.Parent = self.Content
+    toggleFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    toggleFrame.BorderSizePixel = 0
+    toggleFrame.Size = UDim2.new(1, -40, 0, 50)
     
-    local ToggleCorner = Instance.new("UICorner")
-    ToggleCorner.CornerRadius = UDim.new(0, 12)
-    ToggleCorner.Parent = ToggleFrame
+    local toggleCorner = Instance.new("UICorner")
+    toggleCorner.CornerRadius = UDim.new(0, 12)
+    toggleCorner.Parent = toggleFrame
     
-    local ToggleLabel = Instance.new("TextLabel")
-    ToggleLabel.Parent = ToggleFrame
-    ToggleLabel.BackgroundTransparency = 1
-    ToggleLabel.Position = UDim2.new(0, 15, 0, 0)
-    ToggleLabel.Size = UDim2.new(1, -80, 1, 0)
-    ToggleLabel.Font = Enum.Font.Gotham
-    ToggleLabel.Text = config.Text or "Toggle"
-    ToggleLabel.TextColor3 = self.Theme.Text
-    ToggleLabel.TextSize = 14
-    ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    local toggleLabel = Instance.new("TextLabel")
+    toggleLabel.Parent = toggleFrame
+    toggleLabel.BackgroundTransparency = 1
+    toggleLabel.Position = UDim2.new(0, 15, 0, 0)
+    toggleLabel.Size = UDim2.new(1, -80, 1, 0)
+    toggleLabel.Font = Enum.Font.Gotham
+    toggleLabel.Text = config.Text or "Toggle"
+    toggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggleLabel.TextSize = 14
+    toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
     
-    -- Toggle Switch
-    local ToggleButton = Instance.new("TextButton")
-    ToggleButton.Parent = ToggleFrame
-    ToggleButton.BackgroundColor3 = self.Theme.TextSecondary
-    ToggleButton.BorderSizePixel = 0
-    ToggleButton.Position = UDim2.new(1, -60, 0.5, -12)
-    ToggleButton.Size = UDim2.new(0, 50, 0, 24)
-    ToggleButton.Text = ""
+    -- Toggle switch
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Parent = toggleFrame
+    toggleButton.BackgroundColor3 = Color3.fromRGB(55, 55, 65)
+    toggleButton.BorderSizePixel = 0
+    toggleButton.Position = UDim2.new(1, -60, 0.5, -12)
+    toggleButton.Size = UDim2.new(0, 50, 0, 24)
+    toggleButton.Text = ""
     
-    local SwitchCorner = Instance.new("UICorner")
-    SwitchCorner.CornerRadius = UDim.new(0, 12)
-    SwitchCorner.Parent = ToggleButton
+    local switchCorner = Instance.new("UICorner")
+    switchCorner.CornerRadius = UDim.new(0, 12)
+    switchCorner.Parent = toggleButton
     
-    local ToggleCircle = Instance.new("Frame")
-    ToggleCircle.Parent = ToggleButton
-    ToggleCircle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-    ToggleCircle.BorderSizePixel = 0
-    ToggleCircle.Position = UDim2.new(0, 2, 0, 2)
-    ToggleCircle.Size = UDim2.new(0, 20, 0, 20)
+    local toggleCircle = Instance.new("Frame")
+    toggleCircle.Parent = toggleButton
+    toggleCircle.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    toggleCircle.BorderSizePixel = 0
+    toggleCircle.Position = UDim2.new(0, 2, 0, 2)
+    toggleCircle.Size = UDim2.new(0, 20, 0, 20)
     
-    local CircleCorner = Instance.new("UICorner")
-    CircleCorner.CornerRadius = UDim.new(0, 10)
-    CircleCorner.Parent = ToggleCircle
+    local circleCorner = Instance.new("UICorner")
+    circleCorner.CornerRadius = UDim.new(0, 10)
+    circleCorner.Parent = toggleCircle
     
     local isToggled = config.Default or false
     
     local function updateToggle()
-        local TweenService = game:GetService("TweenService")
         if isToggled then
-            TweenService:Create(ToggleButton, TweenInfo.new(0.3), {
-                BackgroundColor3 = self.Theme.Primary
+            TweenService:Create(toggleButton, TweenInfo.new(0.3), {
+                BackgroundColor3 = Color3.fromRGB(99, 102, 241)
             }):Play()
-            TweenService:Create(ToggleCircle, TweenInfo.new(0.3), {
+            TweenService:Create(toggleCircle, TweenInfo.new(0.3), {
                 Position = UDim2.new(0, 28, 0, 2),
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             }):Play()
         else
-            TweenService:Create(ToggleButton, TweenInfo.new(0.3), {
-                BackgroundColor3 = self.Theme.TextSecondary
+            TweenService:Create(toggleButton, TweenInfo.new(0.3), {
+                BackgroundColor3 = Color3.fromRGB(55, 55, 65)
             }):Play()
-            TweenService:Create(ToggleCircle, TweenInfo.new(0.3), {
+            TweenService:Create(toggleCircle, TweenInfo.new(0.3), {
                 Position = UDim2.new(0, 2, 0, 2),
                 BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             }):Play()
         end
     end
     
-    ToggleButton.MouseButton1Click:Connect(function()
+    toggleButton.MouseButton1Click:Connect(function()
         isToggled = not isToggled
         updateToggle()
         if config.Callback then
@@ -544,7 +395,7 @@ function Tab:CreateToggle(config)
     updateToggle()
     
     return {
-        Frame = ToggleFrame,
+        Frame = toggleFrame,
         SetValue = function(value)
             isToggled = value
             updateToggle()
@@ -552,109 +403,191 @@ function Tab:CreateToggle(config)
     }
 end
 
--- 🔔 Notification System
-function Aurora:CreateNotification(config)
-    local NotificationGui = Instance.new("ScreenGui")
-    NotificationGui.Name = "AuroraNotification"
-    NotificationGui.Parent = game.CoreGui
+function Tab:CreateSlider(config)
+    local sliderFrame = Instance.new("Frame")
+    sliderFrame.Name = config.Name or "Slider"
+    sliderFrame.Parent = self.Content
+    sliderFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    sliderFrame.BorderSizePixel = 0
+    sliderFrame.Size = UDim2.new(1, -40, 0, 70)
     
-    local NotificationFrame = Instance.new("Frame")
-    NotificationFrame.Parent = NotificationGui
-    NotificationFrame.BackgroundColor3 = Themes.Dark.Surface
-    NotificationFrame.BorderSizePixel = 0
-    NotificationFrame.Position = UDim2.new(1, 20, 0, 20)
-    NotificationFrame.Size = UDim2.new(0, 350, 0, 80)
+    local sliderCorner = Instance.new("UICorner")
+    sliderCorner.CornerRadius = UDim.new(0, 12)
+    sliderCorner.Parent = sliderFrame
     
-    local NotifCorner = Instance.new("UICorner")
-    NotifCorner.CornerRadius = UDim.new(0, 12)
-    NotifCorner.Parent = NotificationFrame
+    local sliderLabel = Instance.new("TextLabel")
+    sliderLabel.Parent = sliderFrame
+    sliderLabel.BackgroundTransparency = 1
+    sliderLabel.Position = UDim2.new(0, 15, 0, 5)
+    sliderLabel.Size = UDim2.new(1, -30, 0, 25)
+    sliderLabel.Font = Enum.Font.Gotham
+    sliderLabel.Text = config.Text or "Slider"
+    sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sliderLabel.TextSize = 14
+    sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
     
-    -- Notification Icon
-    local NotifIcon = Instance.new("Frame")
-    NotifIcon.Parent = NotificationFrame
-    NotifIcon.BackgroundColor3 = Themes.Dark.Primary
-    NotifIcon.BorderSizePixel = 0
-    NotifIcon.Position = UDim2.new(0, 15, 0.5, -20)
-    NotifIcon.Size = UDim2.new(0, 40, 0, 40)
+    local valueLabel = Instance.new("TextLabel")
+    valueLabel.Parent = sliderFrame
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.Position = UDim2.new(1, -80, 0, 5)
+    valueLabel.Size = UDim2.new(0, 65, 0, 25)
+    valueLabel.Font = Enum.Font.GothamMedium
+    valueLabel.Text = tostring(config.Default or config.Min or 0)
+    valueLabel.TextColor3 = Color3.fromRGB(99, 102, 241)
+    valueLabel.TextSize = 14
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
     
-    local IconCorner = Instance.new("UICorner")
-    IconCorner.CornerRadius = UDim.new(0, 8)
-    IconCorner.Parent = NotifIcon
+    -- Slider track
+    local sliderTrack = Instance.new("Frame")
+    sliderTrack.Parent = sliderFrame
+    sliderTrack.BackgroundColor3 = Color3.fromRGB(55, 55, 65)
+    sliderTrack.BorderSizePixel = 0
+    sliderTrack.Position = UDim2.new(0, 15, 0, 40)
+    sliderTrack.Size = UDim2.new(1, -30, 0, 6)
     
-    local IconText = Instance.new("TextLabel")
-    IconText.Parent = NotifIcon
-    IconText.BackgroundTransparency = 1
-    IconText.Size = UDim2.new(1, 0, 1, 0)
-    IconText.Font = Enum.Font.GothamBold
-    IconText.Text = config.Icon or "✨"
-    IconText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    IconText.TextSize = 20
+    local trackCorner = Instance.new("UICorner")
+    trackCorner.CornerRadius = UDim.new(0, 3)
+    trackCorner.Parent = sliderTrack
     
-    -- Notification Title
-    local NotifTitle = Instance.new("TextLabel")
-    NotifTitle.Parent = NotificationFrame
-    NotifTitle.BackgroundTransparency = 1
-    NotifTitle.Position = UDim2.new(0, 70, 0, 10)
-    NotifTitle.Size = UDim2.new(1, -90, 0, 25)
-    NotifTitle.Font = Enum.Font.GothamBold
-    NotifTitle.Text = config.Title or "Notification"
-    NotifTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NotifTitle.TextSize = 16
-    NotifTitle.TextXAlignment = Enum.TextXAlignment.Left
+    -- Slider fill
+    local sliderFill = Instance.new("Frame")
+    sliderFill.Parent = sliderTrack
+    sliderFill.BackgroundColor3 = Color3.fromRGB(99, 102, 241)
+    sliderFill.BorderSizePixel = 0
+    sliderFill.Size = UDim2.new(0, 0, 1, 0)
     
-    -- Notification Content
-    local NotifContent = Instance.new("TextLabel")
-    NotifContent.Parent = NotificationFrame
-    NotifContent.BackgroundTransparency = 1
-    NotifContent.Position = UDim2.new(0, 70, 0, 35)
-    NotifContent.Size = UDim2.new(1, -90, 0, 35)
-    NotifContent.Font = Enum.Font.Gotham
-    NotifContent.Text = config.Content or "This is a notification"
-    NotifContent.TextColor3 = Color3.fromRGB(156, 163, 175)
-    NotifContent.TextSize = 14
-    NotifContent.TextXAlignment = Enum.TextXAlignment.Left
-    NotifContent.TextWrapped = true
+    local fillCorner = Instance.new("UICorner")
+    fillCorner.CornerRadius = UDim.new(0, 3)
+    fillCorner.Parent = sliderFill
     
-    -- Progress Bar
-    local ProgressBar = Instance.new("Frame")
-    ProgressBar.Parent = NotificationFrame
-    ProgressBar.BackgroundColor3 = Themes.Dark.Primary
-    ProgressBar.BorderSizePixel = 0
-    ProgressBar.Position = UDim2.new(0, 0, 1, -3)
-    ProgressBar.Size = UDim2.new(1, 0, 0, 3)
+    -- Slider handle
+    local sliderHandle = Instance.new("Frame")
+    sliderHandle.Parent = sliderFrame
+    sliderHandle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    sliderHandle.BorderSizePixel = 0
+    sliderHandle.Position = UDim2.new(0, 12, 0, 37)
+    sliderHandle.Size = UDim2.new(0, 12, 0, 12)
+    
+    local handleCorner = Instance.new("UICorner")
+    handleCorner.CornerRadius = UDim.new(0, 6)
+    handleCorner.Parent = sliderHandle
+    
+    local min = config.Min or 0
+    local max = config.Max or 100
+    local default = config.Default or min
+    local currentValue = default
+    
+    local function updateSlider(value)
+        currentValue = math.clamp(value, min, max)
+        local percentage = (currentValue - min) / (max - min)
+        
+        sliderFill.Size = UDim2.new(percentage, 0, 1, 0)
+        sliderHandle.Position = UDim2.new(percentage, 9, 0, 37)
+        valueLabel.Text = tostring(math.floor(currentValue))
+        
+        if config.Callback then
+            config.Callback(currentValue)
+        end
+    end
+    
+    local dragging = false
+    
+    sliderHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+        end
+    end)
+    
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local mouse = Players.LocalPlayer:GetMouse()
+            local trackPosition = sliderTrack.AbsolutePosition.X
+            local trackSize = sliderTrack.AbsoluteSize.X
+            local mouseX = mouse.X
+            
+            local percentage = math.clamp((mouseX - trackPosition) / trackSize, 0, 1)
+            local value = min + (percentage * (max - min))
+            updateSlider(value)
+        end
+    end)
+    
+    updateSlider(default)
+    
+    local slider = {
+        Frame = sliderFrame,
+        SetValue = updateSlider
+    }
+    
+    return slider
+end
+
+-- ========================================
+-- NOTIFICATION SYSTEM
+-- ========================================
+
+function Aurora:Notify(config)
+    local notification = Instance.new("Frame")
+    notification.Name = "Notification"
+    notification.Parent = game.CoreGui
+    notification.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    notification.BorderSizePixel = 0
+    notification.Position = UDim2.new(1, 20, 0, 20)
+    notification.Size = UDim2.new(0, 350, 0, 80)
+    
+    local notifCorner = Instance.new("UICorner")
+    notifCorner.CornerRadius = UDim.new(0, 12)
+    notifCorner.Parent = notification
+    
+    -- Notification content
+    local title = Instance.new("TextLabel")
+    title.Parent = notification
+    title.BackgroundTransparency = 1
+    title.Position = UDim2.new(0, 15, 0, 10)
+    title.Size = UDim2.new(1, -30, 0, 25)
+    title.Font = Enum.Font.GothamBold
+    title.Text = config.Title or "Notification"
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.TextSize = 16
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local content = Instance.new("TextLabel")
+    content.Parent = notification
+    content.BackgroundTransparency = 1
+    content.Position = UDim2.new(0, 15, 0, 35)
+    content.Size = UDim2.new(1, -30, 0, 35)
+    content.Font = Enum.Font.Gotham
+    content.Text = config.Content or "This is a notification"
+    content.TextColor3 = Color3.fromRGB(156, 163, 175)
+    content.TextSize = 14
+    content.TextXAlignment = Enum.TextXAlignment.Left
+    content.TextWrapped = true
     
     -- Slide in animation
-    local TweenService = game:GetService("TweenService")
     local slideIn = TweenService:Create(
-        NotificationFrame,
+        notification,
         TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
         {Position = UDim2.new(1, -370, 0, 20)}
     )
     slideIn:Play()
     
-    -- Progress animation
-    local duration = config.Duration or 5
-    local progressTween = TweenService:Create(
-        ProgressBar,
-        TweenInfo.new(duration, Enum.EasingStyle.Linear),
-        {Size = UDim2.new(0, 0, 0, 3)}
-    )
-    progressTween:Play()
-    
-    -- Auto dismiss using coroutine to avoid script suspension
-    coroutine.wrap(function()
-        wait(duration)
+    -- Auto dismiss
+    spawn(function()
+        wait(config.Duration or 5)
         local slideOut = TweenService:Create(
-            NotificationFrame,
+            notification,
             TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
             {Position = UDim2.new(1, 20, 0, 20)}
         )
         slideOut:Play()
         
         slideOut.Completed:Connect(function()
-            NotificationGui:Destroy()
+            notification:Destroy()
         end)
-    end)()
+    end)
 end
-
-return Aurora
